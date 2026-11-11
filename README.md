@@ -103,3 +103,4 @@ gcloud run deploy rag-highbond \
    ```text
    https://SUA-URL-CLOUD-RUN.a.run.app/openapi.json
    ```
+
