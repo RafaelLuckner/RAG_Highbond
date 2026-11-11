@@ -34,7 +34,9 @@ RUN ollama serve & \
     ollama pull qwen3-embedding:0.6b && \
     kill $SERVER_PID
 
+COPY entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+
 EXPOSE 8080
 
-# 5. Inicia o Ollama em background e sobe a API FastAPI + MCP escutando na porta $PORT do Cloud Run
-CMD ["/bin/sh", "-c", "ollama serve & sleep 2 && rag-api --host 0.0.0.0 --porta ${PORT:-8080}"]
+CMD ["./entrypoint.sh"]
