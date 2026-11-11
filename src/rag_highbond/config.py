@@ -11,8 +11,16 @@ sobrescritos por variáveis de ambiente:
 import os
 from pathlib import Path
 
-# src/rag_highbond/config.py -> raiz do projeto está 3 níveis acima
-RAIZ_PROJETO = Path(__file__).resolve().parents[2]
+def _resolver_raiz_projeto() -> Path:
+    if env_root := os.environ.get("RAG_PROJECT_ROOT"):
+        return Path(env_root).resolve()
+    candidato = Path(__file__).resolve().parents[2]
+    if (candidato / "rag_doc_api").exists():
+        return candidato
+    return Path.cwd().resolve()
+
+
+RAIZ_PROJETO = _resolver_raiz_projeto()
 
 PASTA_RAG_API = RAIZ_PROJETO / "rag_doc_api"
 PASTA_CHUNKS = PASTA_RAG_API / "raw_info" / "chunks"

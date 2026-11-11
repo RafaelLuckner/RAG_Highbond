@@ -96,6 +96,9 @@ def _requisitar_vetor_embedding(texto: str) -> list[float]:
         return response.json()["data"][0]["embedding"]
 
     # Padrão: Ollama (/api/embed)
+    if not ollama_rodando():
+        iniciar_ollama_se_necessario(timeout_segundos=15)
+
     response = _sessao_http.post(
         config.URL_OLLAMA,
         headers=headers,

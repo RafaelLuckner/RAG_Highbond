@@ -16,6 +16,7 @@ import argparse
 from collections import defaultdict, deque
 from contextlib import AsyncExitStack, asynccontextmanager
 import logging
+import os
 import secrets
 import threading
 import time
@@ -135,7 +136,8 @@ _mcp_sse_app = mcp.sse_app()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global _indice
-    iniciar_ollama_se_necessario()
+    # Inicia o Ollama em thread separada para não bloquear a abertura da porta HTTP no Cloud Run
+    threading.Thread(target=iniciar_ollama_se_necessario, daemon=True).start()
     try:
         _indice = IndiceBusca()
         definir_indice(_indice)
@@ -312,9 +314,12 @@ for rota in _mcp_sse_app.routes:
 
 
 def main():
+    host_padrao = os.environ.get("HOST", "127.0.0.1")
+    porta_padrao = int(os.environ.get("PORT", "8000"))
+
     parser = argparse.ArgumentParser(description="API REST + MCP Remoto do RAG HighBond")
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--porta", "--port", type=int, default=8000, dest="porta")
+    parser.add_argument("--host", default=host_padrao)
+    parser.add_argument("--porta", "--port", type=int, default=porta_padrao, dest="porta")
     args = parser.parse_args()
 
     uvicorn.run("rag_highbond.api:app", host=args.host, port=args.porta)
