@@ -1,4 +1,4 @@
-"""Gera uma apresentação moderna e editável do projeto RAG HighBond (Local + Cloud Run + MCP + GPT + Gemini)."""
+"""Gera uma apresentação moderna e editável focada no RAG HighBond, documentação e resultados nos LLMs."""
 
 from collections import Counter
 import json
@@ -18,27 +18,31 @@ CHUNKS = ROOT / "rag_doc_api" / "raw_info" / "chunks"
 EMBEDDINGS = ROOT / "rag_doc_api" / "indice" / "embeddings_qwen3_06b.npy"
 OUTPUT = ROOT / "apresentacao_rag_highbond.pptx"
 
-# Opcional: se o usuário salvar os prints com esses nomes na pasta docs/ ou raiz, o script já insere automaticamente!
-PRINT_GEMINI = [ROOT / "docs" / "print_gemini.png", ROOT / "print_gemini.png"]
+# Caso salve os prints com estes nomes, o script insere automaticamente nos slides 8, 9 e 10:
 PRINT_GPT = [ROOT / "docs" / "print_gpt.png", ROOT / "print_gpt.png"]
-PRINT_API = [ROOT / "docs" / "print_api.png", ROOT / "print_api.png"]
+PRINT_GEMINI = [ROOT / "docs" / "print_gemini.png", ROOT / "print_gemini.png"]
+PRINT_COLAB = [
+    ROOT / "docs" / "print_colab.png",
+    ROOT / "print_colab.png",
+    ROOT / "docs" / "print_api.png",
+    ROOT / "print_api.png",
+]
 
-# Paleta Moderna High-Contrast
-NAVY = RGBColor(15, 29, 50)
-DARK_SLATE = RGBColor(24, 43, 73)
-CARD_DARK = RGBColor(30, 41, 59)
+# Paleta Moderna e Intuitiva
+NAVY = RGBColor(20, 38, 63)
+DARK_SLATE = RGBColor(28, 49, 78)
+CARD_DARK = RGBColor(30, 45, 59)
 BLUE = RGBColor(0, 116, 217)
-TEAL = RGBColor(0, 163, 173)
-ORANGE = RGBColor(242, 125, 42)
-PURPLE = RGBColor(108, 92, 231)
-GREEN = RGBColor(16, 185, 129)
+TEAL = RGBColor(0, 156, 166)
+ORANGE = RGBColor(238, 123, 45)
+PURPLE = RGBColor(103, 92, 168)
+GREEN = RGBColor(16, 163, 127)
 INK = RGBColor(29, 39, 51)
-MUTED = RGBColor(95, 109, 126)
-PAPER = RGBColor(246, 249, 252)
-SOFT_BLUE = RGBColor(235, 245, 255)
-SOFT_TEAL = RGBColor(232, 250, 250)
+MUTED = RGBColor(91, 105, 120)
+PAPER = RGBColor(248, 250, 252)
+SOFT_BG = RGBColor(239, 244, 249)
 WHITE = RGBColor(255, 255, 255)
-LINE = RGBColor(214, 223, 233)
+LINE = RGBColor(217, 225, 233)
 
 
 def add_text(
@@ -80,94 +84,90 @@ def add_rect(slide, x, y, w, h, fill, radius=False, line=None, line_width=1.0):
     return shape
 
 
-def add_badge(slide, text, x, y, w, h=0.34, bg=TEAL, fg=WHITE, size=10.5):
+def add_badge(slide, text, x, y, w, h=0.32, bg=TEAL, fg=WHITE, size=10):
     add_rect(slide, x, y, w, h, bg, radius=True)
-    add_text(slide, text, x, y + 0.04, w, h - 0.04, size, fg, True, align=PP_ALIGN.CENTER, valign=MSO_ANCHOR.MIDDLE)
+    add_text(slide, text, x, y + 0.03, w, h - 0.03, size, fg, True, align=PP_ALIGN.CENTER, valign=MSO_ANCHOR.MIDDLE)
 
 
-def add_header(slide, title, subtitle, number, total=12):
+def add_header(slide, title, subtitle, number, total=11):
     add_rect(slide, 0, 0, 13.333, 7.5, PAPER)
-    add_rect(slide, 0, 0, 13.333, 0.08, TEAL)
-    add_text(slide, title, 0.72, 0.38, 10.2, 0.48, 25, NAVY, True, "Aptos Display")
-    add_text(slide, subtitle, 0.74, 0.88, 10.7, 0.3, 11, MUTED)
-    add_badge(slide, f"{number:02d} / {total:02d}", 11.75, 0.44, 0.88, 0.32, DARK_SLATE, WHITE, 10)
+    add_rect(slide, 0, 0, 13.333, 0.07, TEAL)
+    add_text(slide, title, 0.72, 0.38, 10.4, 0.48, 25, NAVY, True, "Aptos Display")
+    add_text(slide, subtitle, 0.74, 0.88, 10.8, 0.3, 11, MUTED)
+    add_badge(slide, f"{number:02d} / {total:02d}", 11.78, 0.44, 0.85, 0.3, DARK_SLATE, WHITE, 9.5)
     add_rect(slide, 0.72, 1.28, 11.9, 0.015, LINE)
 
 
 def add_footer(slide):
-    add_rect(slide, 0.72, 7.05, 11.9, 0.01, LINE)
-    add_text(
-        slide,
-        "RAG HighBond | Busca Semântica + Servidor MCP + API Cloud Run (https://rag-highbond-764415736.us-central1.run.app)",
-        0.72,
-        7.12,
-        10.5,
-        0.22,
-        8.5,
-        MUTED,
-    )
-    add_text(slide, "Rafael Luckner", 11.2, 7.12, 1.4, 0.22, 8.5, NAVY, True, align=PP_ALIGN.RIGHT)
+    add_rect(slide, 0.72, 7.08, 11.9, 0.01, LINE)
+    add_text(slide, "RAG HighBond | Documentação técnica com busca semântica para LLMs", 0.72, 7.14, 8.5, 0.2, 8.5, MUTED)
+    add_text(slide, "Rafael Luckner", 11.0, 7.14, 1.6, 0.2, 8.5, NAVY, True, align=PP_ALIGN.RIGHT)
 
 
-def add_bullet_list(slide, items, x, y, w, size=14.5, color=INK, gap=0.11, bullet_color=TEAL, row_h=0.42):
+def add_bullet_list(slide, items, x, y, w, size=14.5, color=INK, gap=0.12, bullet_color=TEAL, row_h=0.42):
     current_y = y
     for item in items:
-        add_text(slide, "▸", x, current_y, 0.24, 0.28, size, bullet_color, True)
+        add_text(slide, "•", x, current_y, 0.22, 0.28, size, bullet_color, True)
         add_text(slide, item, x + 0.26, current_y, w - 0.26, row_h, size, color)
         current_y += row_h + gap
 
 
-def add_metric(slide, value, label, x, y, w, accent=TEAL, sublabel=None):
-    h = 1.32 if sublabel else 1.2
-    add_rect(slide, x, y, w, h, WHITE, True, LINE)
-    add_rect(slide, x, y, 0.09, h, accent)
-    add_text(slide, str(value), x + 0.25, y + 0.14, w - 0.35, 0.44, 25, NAVY, True, "Aptos Display")
-    add_text(slide, label, x + 0.25, y + 0.68, w - 0.32, 0.28, 11, INK, True)
-    if sublabel:
-        add_text(slide, sublabel, x + 0.25, y + 0.95, w - 0.32, 0.24, 9.5, MUTED)
+def add_metric(slide, value, label, x, y, w, accent=TEAL):
+    add_rect(slide, x, y, w, 1.25, WHITE, True, LINE)
+    add_rect(slide, x, y, 0.08, 1.25, accent)
+    add_text(slide, str(value), x + 0.25, y + 0.18, w - 0.4, 0.42, 25, NAVY, True, "Aptos Display")
+    add_text(slide, label, x + 0.25, y + 0.74, w - 0.35, 0.32, 10.5, MUTED)
 
 
-def add_step(slide, number_str, label, detail, x, y, w, color):
-    add_rect(slide, x, y, w, 1.65, WHITE, True, LINE)
-    add_rect(slide, x, y, w, 0.11, color, True)
-    add_badge(slide, number_str, x + 0.16, y + 0.24, 0.42, 0.28, color, WHITE, 10)
-    add_text(slide, label, x + 0.16, y + 0.62, w - 0.32, 0.32, 14.5, NAVY, True)
-    add_text(slide, detail, x + 0.16, y + 1.0, w - 0.32, 0.52, 10.5, MUTED)
+def add_step(slide, label, detail, x, color):
+    add_rect(slide, x, 2.55, 1.9, 1.55, WHITE, True, LINE)
+    add_rect(slide, x, 2.55, 1.9, 0.12, color, True)
+    add_text(slide, label, x + 0.16, 2.88, 1.58, 0.32, 15, NAVY, True)
+    add_text(slide, detail, x + 0.16, 3.32, 1.58, 0.55, 10.5, MUTED)
 
 
-def add_screenshot_frame(slide, x, y, w, h, title_window, instruction_text, candidate_paths, accent=TEAL):
-    """Cria uma moldura de janela moderna para o print (ou insere a imagem automaticamente se existir)."""
-    # Sombra/borda externa da janela
-    add_rect(slide, x, y, w, h, WHITE, True, LINE, line_width=1.5)
-    # Barra de título estilo navegador/app escuro
-    add_rect(slide, x, y, w, 0.42, DARK_SLATE, True)
-    # Bolinhas da janela (macOS/modern window controls)
-    add_rect(slide, x + 0.18, y + 0.14, 0.12, 0.12, RGBColor(239, 68, 68), True)
-    add_rect(slide, x + 0.36, y + 0.14, 0.12, 0.12, RGBColor(245, 158, 11), True)
-    add_rect(slide, x + 0.54, y + 0.14, 0.12, 0.12, RGBColor(16, 185, 129), True)
-    add_text(slide, title_window, x + 0.8, y + 0.09, w - 1.0, 0.24, 10.5, WHITE, True, "Consolas")
+def add_screenshot_box(slide, x, y, w, h, window_title, placeholder_label, hint_text, candidate_paths, accent=TEAL):
+    """Cria uma moldura visual limpa para colar o print (ou carrega a imagem se existir)."""
+    add_rect(slide, x, y, w, h, WHITE, True, LINE, line_width=1.2)
+    add_rect(slide, x, y, w, 0.38, DARK_SLATE, True)
+    add_rect(slide, x + 0.16, y + 0.13, 0.11, 0.11, RGBColor(239, 68, 68), True)
+    add_rect(slide, x + 0.32, y + 0.13, 0.11, 0.11, RGBColor(245, 158, 11), True)
+    add_rect(slide, x + 0.48, y + 0.13, 0.11, 0.11, RGBColor(16, 185, 129), True)
+    add_text(slide, window_title, x + 0.72, y + 0.08, w - 0.85, 0.22, 10, WHITE, True, "Consolas")
 
     img_path = next((p for p in candidate_paths if p.exists()), None)
-    inner_x, inner_y, inner_w, inner_h = x + 0.14, y + 0.54, w - 0.28, h - 0.68
+    ix, iy, iw, ih = x + 0.12, y + 0.48, w - 0.24, h - 0.6
 
     if img_path is not None:
-        slide.shapes.add_picture(str(img_path), Inches(inner_x), Inches(inner_y), width=Inches(inner_w))
+        slide.shapes.add_picture(str(img_path), Inches(ix), Inches(iy), width=Inches(iw))
     else:
-        # Área tracejada/estilizada pronta para colar o print no PowerPoint
-        add_rect(slide, inner_x, inner_y, inner_w, inner_h, PAPER, True, accent, line_width=1.5)
-        add_badge(slide, "ESPAÇO PARA PRINT / SCREENSHOT", inner_x + inner_w / 2 - 1.45, inner_y + inner_h / 2 - 0.65, 2.9, 0.36, accent, WHITE, 10)
-        add_text(
-            slide,
-            instruction_text,
-            inner_x + 0.4,
-            inner_y + inner_h / 2 - 0.15,
-            inner_w - 0.8,
-            0.9,
-            12,
-            MUTED,
-            False,
-            align=PP_ALIGN.CENTER,
-        )
+        add_rect(slide, ix, iy, iw, ih, SOFT_BG, True, accent, line_width=1.2)
+        add_badge(slide, placeholder_label, ix + iw / 2 - 1.35, iy + ih / 2 - 0.52, 2.7, 0.34, accent, WHITE, 9.5)
+        add_text(slide, hint_text, ix + 0.25, iy + ih / 2 - 0.05, iw - 0.5, 0.75, 11, MUTED, align=PP_ALIGN.CENTER)
+
+
+def add_mini_table(slide, headers, rows, x, y, col_widths, accent=TEAL, row_h=0.29, font_size=9.5):
+    """Desenha uma tabela compacta e moderna para mostrar os resultados do RAG."""
+    total_w = sum(col_widths)
+    add_rect(slide, x, y, total_w, row_h, accent, radius=False)
+    curr_x = x
+    for h_text, cw in zip(headers, col_widths):
+        add_text(slide, h_text, curr_x + 0.06, y + 0.04, cw - 0.12, row_h - 0.04, font_size, WHITE, True)
+        curr_x += cw
+
+    curr_y = y + row_h
+    for r_idx, row in enumerate(rows):
+        bg = WHITE if r_idx % 2 == 0 else SOFT_BG
+        add_rect(slide, x, curr_y, total_w, row_h, bg, line=LINE, line_width=0.5)
+        curr_x = x
+        for c_idx, (cell_text, cw) in enumerate(zip(row, col_widths)):
+            is_code = c_idx in (1, 2)
+            font_name = "Consolas" if is_code else "Aptos"
+            color = TEAL if c_idx == 1 else INK
+            bold = c_idx in (0, 1)
+            add_text(slide, str(cell_text), curr_x + 0.06, curr_y + 0.04, cw - 0.1, row_h - 0.04, font_size - 0.5, color, bold, font_name)
+            curr_x += cw
+        curr_y += row_h
 
 
 def _carregar_metricas():
@@ -216,7 +216,7 @@ def _carregar_metricas():
 
 def build_presentation(output_path: Path = OUTPUT):
     m = _carregar_metricas()
-    total_slides = 12
+    total_slides = 11
 
     presentation = Presentation()
     presentation.slide_width = Inches(13.333)
@@ -228,102 +228,90 @@ def build_presentation(output_path: Path = OUTPUT):
     # =========================================================================
     slide = presentation.slides.add_slide(blank)
     add_rect(slide, 0, 0, 13.333, 7.5, NAVY)
-    add_rect(slide, 0, 0, 0.24, 7.5, TEAL)
-    add_rect(slide, 8.75, 0, 4.583, 7.5, DARK_SLATE)
+    add_rect(slide, 0, 0, 0.22, 7.5, TEAL)
+    add_rect(slide, 9.0, 0, 4.333, 7.5, RGBColor(17, 54, 84))
 
-    add_badge(slide, "RAG • MODEL CONTEXT PROTOCOL (MCP) • GOOGLE CLOUD RUN", 0.88, 0.92, 4.65, 0.34, TEAL, WHITE, 10)
-    add_text(slide, "RAG HighBond", 0.88, 1.48, 7.5, 0.85, 42, WHITE, True, "Aptos Display")
+    add_badge(slide, "CONTEXTO PARA LLMs  •  BUSCA SEMÂNTICA  •  MCP", 0.88, 1.0, 4.2, 0.34, TEAL, WHITE, 10)
+    add_text(slide, "RAG HighBond", 0.88, 1.52, 7.4, 0.85, 42, WHITE, True, "Aptos Display")
     add_text(
         slide,
-        "Da especificação OpenAPI a um Serviço Cloud & MCP\nacessível no Gemini, ChatGPT, IDEs e via API REST",
+        "Da especificação OpenAPI à consulta inteligente\nda documentação técnica com LLMs",
         0.9,
-        2.42,
-        7.5,
+        2.48,
+        7.4,
         0.95,
-        20,
-        RGBColor(210, 228, 245),
+        22,
+        RGBColor(215, 231, 244),
     )
     add_text(
         slide,
-        "Busca semântica cross-lingual (PT ↔ EN) com Qwen3-Embedding 0.6B,\nhospedada em container Serverless com cache LRU, autenticação e controle de taxa.",
+        "Recuperação Aumentada por Geração (RAG) aplicada à API HighBond / Diligent,\nintegrada ao ChatGPT, Gemini e Google Colab.",
         0.9,
-        3.68,
-        7.3,
-        0.75,
-        13.5,
-        RGBColor(175, 198, 220),
+        3.72,
+        7.1,
+        0.7,
+        14.5,
+        RGBColor(184, 207, 224),
     )
 
-    # Cards de destaque na direita da capa
-    add_rect(slide, 9.25, 1.15, 3.45, 1.45, CARD_DARK, True, TEAL, 1.5)
-    add_text(slide, f"{m['indexed_chunks']} Endpoints", 9.5, 1.35, 3.0, 0.4, 24, TEAL, True, "Aptos Display")
-    add_text(slide, f"Indexados a partir de {m['num_paths']} rotas da documentação oficial HighBond", 9.5, 1.85, 3.0, 0.5, 10.5, WHITE)
+    add_rect(slide, 9.75, 1.35, 2.8, 1.5, TEAL, True)
+    add_text(slide, f"{m['num_paths']}\nrotas OpenAPI", 9.9, 1.58, 2.5, 0.95, 24, WHITE, True, "Aptos Display", PP_ALIGN.CENTER)
 
-    add_rect(slide, 9.25, 2.85, 3.45, 1.45, CARD_DARK, True, BLUE, 1.5)
-    add_text(slide, "MCP + REST API", 9.5, 3.05, 3.0, 0.4, 24, RGBColor(96, 178, 255), True, "Aptos Display")
-    add_text(slide, "Conectado ao Gemini/Antigravity, VS Code, Claude e App do ChatGPT", 9.5, 3.55, 3.0, 0.5, 10.5, WHITE)
+    add_rect(slide, 9.75, 3.15, 2.8, 1.35, BLUE, True)
+    add_text(slide, f"{m['indexed_chunks']} chunks\nindexados", 9.9, 3.38, 2.5, 0.85, 20, WHITE, True, "Aptos Display", PP_ALIGN.CENTER)
 
-    add_rect(slide, 9.25, 4.55, 3.45, 1.45, CARD_DARK, True, ORANGE, 1.5)
-    add_text(slide, "Cloud Run Live", 9.5, 4.75, 3.0, 0.4, 24, ORANGE, True, "Aptos Display")
-    add_text(slide, "Deploy em produção com resposta em ~650 ms (e ~2 ms via Cache LRU)", 9.5, 5.25, 3.0, 0.5, 10.5, WHITE)
+    add_rect(slide, 9.75, 4.78, 2.8, 1.15, ORANGE, True)
+    add_text(slide, "ChatGPT • Gemini • Colab", 9.85, 5.18, 2.6, 0.35, 13, WHITE, True, align=PP_ALIGN.CENTER)
 
-    add_text(slide, "Rafael Luckner  •  2026", 0.9, 6.68, 4.5, 0.3, 11, RGBColor(184, 207, 224), True)
+    add_text(slide, "Rafael Luckner  •  2026", 0.9, 6.72, 3.5, 0.25, 11, RGBColor(184, 207, 224), True)
 
     # =========================================================================
-    # SLIDE 2 — O DESAFIO & EVOLUÇÃO
+    # SLIDE 2 — O DESAFIO
     # =========================================================================
     slide = presentation.slides.add_slide(blank)
-    add_header(slide, "O desafio e a visão do serviço", "Transformar uma especificação extensa em uma ferramenta viva para qualquer LLM", 2, total_slides)
-
-    add_rect(slide, 0.75, 1.65, 5.65, 4.95, WHITE, True, LINE)
-    add_badge(slide, "PROBLEMA INICIAL", 1.05, 1.95, 1.75, 0.3, ORANGE, WHITE, 9.5)
+    add_header(slide, "O desafio", "Tornar uma referência extensa de API consultável em linguagem natural pelos LLMs", 2, total_slides)
+    add_text(slide, "Pergunta de partida", 0.75, 1.75, 3.2, 0.36, 15, TEAL, True)
     add_text(
         slide,
-        "Como encontrar rapidamente o endpoint exato em uma API com 369 operações sem estourar o contexto da LLM?",
-        1.05,
-        2.42,
-        5.05,
-        1.15,
-        20,
+        "Como localizar rapidamente os endpoints, payloads e gatilhos certos em uma API ampla, sem percorrer manualmente o JSON?",
+        0.75,
+        2.18,
+        5.5,
+        1.4,
+        24,
         NAVY,
         True,
         "Aptos Display",
     )
-    add_bullet_list(
+    add_text(
         slide,
-        [
-            "O arquivo openapi.json bruto tem mais de 3 MB (inviável enviar inteiro no prompt).",
-            "A documentação original é 100% em inglês, enquanto as perguntas vêm em português.",
-            "Desenvolvedores e agentes precisam tanto de busca rápida quanto do schema completo.",
-        ],
-        1.05,
-        3.85,
-        5.0,
-        13.5,
+        "Enviar o arquivo OpenAPI inteiro no prompt estoura o limite de tokens e reduz a precisão do modelo. O RAG entrega apenas os trechos relevantes para a pergunta.",
+        0.75,
+        3.95,
+        5.4,
+        1.1,
+        14,
         MUTED,
-        gap=0.18,
-        bullet_color=ORANGE,
     )
 
-    add_rect(slide, 6.72, 1.65, 5.88, 4.95, WHITE, True, TEAL, 1.5)
-    add_badge(slide, "SOLUÇÃO IMPLEMENTADA", 7.05, 1.95, 2.15, 0.3, TEAL, WHITE, 9.5)
-    add_text(slide, "Arquitetura RAG como Serviço Universal", 7.05, 2.42, 5.2, 0.4, 20, NAVY, True, "Aptos Display")
+    add_rect(slide, 6.75, 1.72, 5.85, 4.85, WHITE, True, LINE)
+    add_rect(slide, 6.75, 1.72, 5.85, 0.1, TEAL, True)
+    add_text(slide, "Critérios da solução", 7.15, 2.08, 4.5, 0.35, 18, NAVY, True, "Aptos Display")
     add_bullet_list(
         slide,
         [
-            "Segmentação inteligente em 369 chunks Markdown com metadados YAML.",
-            "Busca semântica bilíngue (PT ↔ EN) com Qwen3-Embedding (0.6B).",
-            "Dupla exposição: Protocolo MCP (stdio/HTTP/SSE) + API REST (OpenAPI 3.1).",
-            "Proteção de produção: API Key Bearer, Rate Limit (30/min) e Semáforo de CPU.",
-            "Hospedado gratuitamente no Google Cloud Run com modelo embarcado na imagem.",
+            "Preservar 100% da fidelidade técnica da documentação de origem (OpenAPI).",
+            "Aceitar perguntas em português e buscar na documentação em inglês (Cross-Lingual).",
+            "Recuperar tanto a visão geral (ranking de endpoints) quanto o schema completo.",
+            "Expor a base como ferramenta (MCP / API) para uso direto no ChatGPT, Gemini e Colab.",
         ],
-        7.05,
-        3.05,
-        5.25,
-        13.5,
+        7.15,
+        2.68,
+        5.1,
+        14.5,
         INK,
-        gap=0.14,
-        bullet_color=TEAL,
+        gap=0.22,
+        row_h=0.52,
     )
     add_footer(slide)
 
@@ -331,28 +319,28 @@ def build_presentation(output_path: Path = OUTPUT):
     # SLIDE 3 — A DOCUMENTAÇÃO DE ORIGEM
     # =========================================================================
     slide = presentation.slides.add_slide(blank)
-    add_header(slide, "A documentação de origem", "A especificação oficial OpenAPI serve como fonte única de verdade", 3, total_slides)
-    add_metric(slide, f"{m['num_paths']}", "Rotas (Paths) OpenAPI", 0.75, 1.72, 2.8, TEAL, "Endpoints RESTful mapeados")
-    add_metric(slide, f"{m['num_ops']}", "Operações HTTP", 3.78, 1.72, 2.8, BLUE, "GET, POST, PATCH, PUT, DELETE")
-    add_metric(slide, f"{m['num_tags']}", "Domínios Funcionais", 6.81, 1.72, 2.8, ORANGE, "Projects, Controls, Strategy, etc.")
-    add_metric(slide, f"{m['schemas']}", "Schemas de Dados", 9.84, 1.72, 2.78, PURPLE, "Payloads e modelos JSON:API")
+    add_header(slide, "A documentação de origem", "A especificação oficial da API HighBond como fonte de verdade", 3, total_slides)
+    add_metric(slide, f"{m['num_paths']}", "caminhos (paths) OpenAPI", 0.75, 1.72, 2.75, TEAL)
+    add_metric(slide, f"{m['num_ops']}", "operações HTTP documentadas", 3.78, 1.72, 2.75, BLUE)
+    add_metric(slide, f"{m['num_tags']}", "domínios / tags funcionais", 6.81, 1.72, 2.75, ORANGE)
+    add_metric(slide, f"{m['schemas']}", "schemas reutilizáveis", 9.84, 1.72, 2.75, PURPLE)
 
-    add_rect(slide, 0.75, 3.42, 11.87, 3.2, WHITE, True, LINE)
-    add_text(slide, "Especificação Técnica: HighBond API Reference (Diligent)", 1.1, 3.75, 8.5, 0.35, 18, NAVY, True, "Aptos Display")
-    add_text(slide, "OpenAPI 3.0.2  •  Padrão JSON:API v1.0  •  Autenticação Bearer / OAuth 2.0", 1.1, 4.18, 9.8, 0.28, 14, TEAL, True)
+    add_rect(slide, 0.75, 3.38, 11.85, 3.2, WHITE, True, LINE)
+    add_text(slide, "openapi.json — HighBond API Reference", 1.1, 3.72, 6.5, 0.35, 18, NAVY, True, "Aptos Display")
+    add_text(slide, "OpenAPI 3.0.2  |  HighBond API v1.1.0  |  Padrão JSON:API v1.0  |  OAuth 2.0", 1.1, 4.18, 9.8, 0.28, 14, TEAL, True)
     add_bullet_list(
         slide,
         [
-            f"Base bruta de {m['size_mb']:.1f} MB processada e higienizada (remoção de tokens de exemplo e resolução de $refs).",
-            "Cobre todos os módulos da plataforma: Auditoria, Controles, Riscos Estratégicos, Robots, Storyboards e Questionários.",
-            "Cada operação foi isolada mantendo parâmetros de rota/query, schemas de corpo e códigos de resposta HTTP.",
+            f"Arquivo bruto de {m['size_mb']:.1f} MB contendo todas as rotas de Projects, Controls, Results (Events/Handlers), Strategy e Robots.",
+            "Estrutura rica com parâmetros de rota/query, schemas aninhados ($refs), atributos de payload e exemplos de resposta.",
+            "Transformado em documentos independentes para que o LLM consulte apenas os endpoints necessários a cada pergunta.",
         ],
         1.1,
         4.68,
         11.0,
-        13.5,
+        14,
         INK,
-        gap=0.1,
+        gap=0.14,
     )
     add_footer(slide)
 
@@ -360,344 +348,414 @@ def build_presentation(output_path: Path = OUTPUT):
     # SLIDE 4 — COBERTURA DA API
     # =========================================================================
     slide = presentation.slides.add_slide(blank)
-    add_header(slide, "Cobertura da API por Método HTTP", "Distribuição das 369 operações indexadas na base vetorial", 4, total_slides)
+    add_header(slide, "Cobertura da API", "Distribuição das 369 operações presentes na documentação", 4, total_slides)
     mc = m["method_counts"]
     labels = [
-        ("GET", mc["get"], TEAL, "Consultas e listagens paginadas"),
-        ("POST", mc["post"], BLUE, "Criação de recursos e uploads"),
-        ("PATCH", mc["patch"], ORANGE, "Atualizações parciais de estado"),
-        ("DELETE", mc["delete"], RGBColor(214, 69, 69), "Remoção de registros e vínculos"),
-        ("PUT", mc["put"], PURPLE, "Substituição integral de recursos"),
+        ("GET", mc["get"], TEAL),
+        ("POST", mc["post"], BLUE),
+        ("PATCH", mc["patch"], ORANGE),
+        ("DELETE", mc["delete"], RGBColor(201, 74, 74)),
+        ("PUT", mc["put"], PURPLE),
     ]
-    max_count = max(count for _, count, _, _ in labels)
-    for index, (label, count, color, desc) in enumerate(labels):
-        y = 1.78 + index * 0.92
-        add_badge(slide, label, 0.82, y + 0.04, 1.05, 0.38, color, WHITE, 12)
-        add_rect(slide, 2.05, y + 0.04, 6.8, 0.38, RGBColor(231, 236, 241), True)
-        add_rect(slide, 2.05, y + 0.04, max(0.4, 6.8 * count / max_count), 0.38, color, True)
-        add_text(slide, str(count), 9.0, y + 0.06, 0.65, 0.3, 15, NAVY, True, align=PP_ALIGN.RIGHT)
-        add_text(slide, desc, 9.85, y + 0.08, 2.8, 0.3, 11.5, MUTED)
+    max_count = max(count for _, count, _ in labels)
+    for index, (label, count, color) in enumerate(labels):
+        y = 1.85 + index * 0.82
+        add_badge(slide, label, 0.85, y + 0.02, 1.0, 0.38, color, WHITE, 12)
+        add_rect(slide, 2.05, y + 0.02, 7.3, 0.38, RGBColor(231, 236, 241), True)
+        add_rect(slide, 2.05, y + 0.02, max(0.35, 7.3 * count / max_count), 0.38, color, True)
+        add_text(slide, str(count), 9.55, y + 0.04, 0.65, 0.3, 14.5, NAVY, True, align=PP_ALIGN.RIGHT)
 
-    add_footer(slide)
-
-    # =========================================================================
-    # SLIDE 5 — PIPELINE DE ENGENHARIA RAG
-    # =========================================================================
-    slide = presentation.slides.add_slide(blank)
-    add_header(slide, "Pipeline de Engenharia RAG", "Do arquivo OpenAPI bruto ao serviço em nuvem de baixa latência", 5, total_slides)
-    steps = [
-        ("01", "Extrair", "Parsing do OpenAPI JSON e resolução de schemas", 0.72, TEAL),
-        ("02", "Estruturar", "369 arquivos Markdown com Front Matter YAML", 3.16, BLUE),
-        ("03", "Vetorizar", "Qwen3-Embedding 0.6B (1024 dimensões)", 5.60, ORANGE),
-        ("04", "Indexar", "Matriz NumPy (.npy) normalizada + Dict O(1)", 8.04, PURPLE),
-        ("05", "Servir", "FastAPI + FastMCP no Google Cloud Run", 10.48, GREEN),
-    ]
-    for num_s, label, detail, x, color in steps:
-        add_step(slide, num_s, label, detail, x, 2.15, 2.12, color)
-    for x in (2.88, 5.32, 7.76, 10.20):
-        add_text(slide, "→", x, 2.78, 0.26, 0.3, 18, MUTED, True, align=PP_ALIGN.CENTER)
-
-    add_rect(slide, 0.72, 4.35, 11.88, 2.15, WHITE, True, LINE)
-    add_text(slide, "Destaques de Engenharia do Pipeline", 1.05, 4.55, 6.0, 0.32, 16, NAVY, True)
-    add_bullet_list(
+    add_rect(slide, 10.55, 1.78, 2.05, 4.45, WHITE, True, LINE)
+    add_rect(slide, 10.55, 1.78, 2.05, 0.1, TEAL, True)
+    add_text(slide, "Cada endpoint preserva", 10.72, 2.05, 1.7, 0.5, 13.5, NAVY, True, align=PP_ALIGN.CENTER)
+    add_text(
         slide,
-        [
-            "Alinhamento determinístico: ordenação alfabética garante correspondência exata entre cada chunk .md e sua linha na matriz .npy.",
-            "Instruction-Aware Retrieval: perguntas recebem o prefixo 'Instruct: Retrieve the most relevant HighBond API documentation...' para máxima precisão PT→EN.",
-            "Imagem Docker enxuta (~700 MB): remoção das bibliotecas pesadas de GPU (CUDA/ROCm) do Ollama, mantendo apenas o motor CPU + modelo pré-carregado.",
-        ],
-        1.05,
-        4.98,
-        11.2,
-        13,
-        INK,
-        gap=0.08,
+        "• Método e Rota\n• operationId\n• Domínio (Tag)\n• Parâmetros\n• Request Body\n• Schemas JSON\n• Respostas HTTP",
+        10.75,
+        2.72,
+        1.7,
+        3.1,
+        12.5,
+        MUTED,
     )
     add_footer(slide)
 
     # =========================================================================
-    # SLIDE 6 — ESTRUTURA DOS CHUNKS MARKDOWN
+    # SLIDE 5 — PROCESSO EXECUTADO (PIPELINE RAG)
     # =========================================================================
     slide = presentation.slides.add_slide(blank)
-    add_header(slide, "Unidade de Contexto (Chunking Semântico)", "Cada endpoint é isolado em um documento Markdown auto-contido", 6, total_slides)
-    add_rect(slide, 0.75, 1.68, 6.1, 4.95, CARD_DARK, True)
-    add_badge(slide, "endpoint-post-orgs-org-id-projects-createproject.md", 1.05, 1.92, 4.6, 0.3, TEAL, WHITE, 9.5)
+    add_header(slide, "Processo executado", "Pipeline que converte a especificação OpenAPI em uma base semântica consultável", 5, total_slides)
+    steps = [
+        ("1. Extrair", "Leitura do OpenAPI JSON e resolução de referências", 0.72, TEAL),
+        ("2. Estruturar", "Geração de 369 chunks em Markdown + YAML", 3.16, BLUE),
+        ("3. Vetorizar", "Embeddings com Ollama (qwen3-embedding:0.6b)", 5.60, ORANGE),
+        ("4. Indexar", "Matriz NumPy (.npy) normalizada em disco", 8.04, PURPLE),
+        ("5. Consultar", "Busca em 2 etapas via MCP e API nos LLMs", 10.48, TEAL),
+    ]
+    for label, detail, x, color in steps:
+        add_step(slide, label, detail, x, color)
+    for x in (2.72, 5.16, 7.60, 10.04):
+        add_text(slide, "→", x, 3.12, 0.34, 0.3, 18, MUTED, True, align=PP_ALIGN.CENTER)
+
+    add_rect(slide, 0.72, 4.65, 11.9, 1.85, WHITE, True, LINE)
+    add_text(slide, "Alinhamento e Rastreabilidade", 1.05, 4.88, 5.0, 0.3, 15.5, NAVY, True)
+    add_text(
+        slide,
+        "• A ordem alfabética dos arquivos Markdown é preservada para manter cada chunk exatamente alinhado à sua linha na matriz de embeddings (.npy).\n"
+        "• A consulta é dividida em duas operações complementares: buscar_highbond (localiza os endpoints mais relevantes por similaridade) e obter_chunk (recupera a documentação completa do endpoint escolhido).",
+        1.05,
+        5.28,
+        11.2,
+        1.0,
+        13.5,
+        INK,
+    )
+    add_footer(slide)
+
+    # =========================================================================
+    # SLIDE 6 — COMO A DOCUMENTAÇÃO FOI PREPARADA (CHUNKS)
+    # =========================================================================
+    slide = presentation.slides.add_slide(blank)
+    add_header(slide, "Como a documentação foi preparada", "Cada operação da API vira uma unidade de contexto auto-contida em Markdown", 6, total_slides)
+    add_rect(slide, 0.75, 1.72, 5.95, 4.85, CARD_DARK, True)
+    add_badge(slide, "Exemplo de Chunk Markdown com Front Matter YAML", 1.05, 1.95, 4.3, 0.3, TEAL, WHITE, 9.5)
     code = (
         "---\n"
-        'id: "endpoint-post-orgs-org-id-projects-createproject"\n'
-        'title: "Projects: Create a project"\n'
-        "tags:\n"
-        "  - Projects\n"
-        'source: "openapi.json"\n'
+        "id: endpoint-post-orgs-org-id-events-createevent\n"
+        'title: "Events: Create an event"\n'
+        "tags: [Events]\n"
+        "source: openapi.json\n"
         "---\n\n"
-        "### `POST /orgs/{org_id}/projects` — Create a project\n"
-        "- **operationId:** `createProject`\n"
-        "- **Domínio(s):** Projects\n\n"
-        "#### Parâmetros, Request Body e Respostas (201 Created)..."
+        "### `POST /orgs/{org_id}/events` — Create an event\n"
+        "- **operationId:** `createEvent`\n"
+        "- **Domínio(s):** Events\n\n"
+        "#### Request Body / Parâmetros / Triggers\n"
+        "Atributos: title, target, triggers (fieldUpdated,\n"
+        "questionnaireResponded)..."
     )
-    add_text(slide, code, 1.05, 2.42, 5.55, 3.9, 13, RGBColor(220, 235, 245), False, "Consolas")
+    add_text(slide, code, 1.05, 2.42, 5.35, 3.9, 13.5, RGBColor(220, 233, 242), False, "Consolas")
 
-    add_metric(slide, str(m["indexed_chunks"]), "Chunks válidos indexados", 7.2, 1.72, 5.4, BLUE, "1 chunk = 1 endpoint completo (sem quebrar tabelas JSON)")
-    add_rect(slide, 7.2, 3.28, 5.4, 3.35, WHITE, True, LINE)
-    add_text(slide, "Busca em 2 Etapas (Economia de Tokens)", 7.5, 3.55, 4.8, 0.32, 16, NAVY, True)
+    add_metric(slide, str(m["total_chunks"]), "arquivos Markdown na coleção", 7.1, 1.75, 5.5, BLUE)
+    add_metric(slide, str(m["indexed_chunks"]), "chunks de endpoints com Front Matter YAML", 7.1, 3.18, 5.5, TEAL)
+    add_text(slide, "Vantagens desse formato para LLMs", 7.12, 4.72, 4.5, 0.3, 16, NAVY, True)
     add_bullet_list(
         slide,
         [
-            "Etapa 1 (buscar_highbond / POST /buscar): Retorna apenas o Top-K com ID, título, score de similaridade e um resumo de 500 caracteres.",
-            "Etapa 2 (obter_chunk / GET /chunks/{id}): O LLM solicita o Markdown completo apenas do endpoint que realmente vai utilizar.",
-            "Busca de Chunk O(1): Dicionário em memória indexado por ID entrega o documento completo instantaneamente.",
+            "Front Matter YAML isola id, título e tags para indexação limpa.",
+            "Um endpoint inteiro por chunk evita cortar schemas JSON ao meio.",
+            "Markdown estruturado é o formato nativo de melhor leitura para GPT e Gemini.",
         ],
-        7.5,
-        4.05,
-        4.85,
+        7.1,
+        5.12,
+        5.4,
+        13.5,
+        INK,
+        gap=0.1,
+    )
+    add_footer(slide)
+
+    # =========================================================================
+    # SLIDE 7 — ÍNDICE SEMÂNTICO E BUSCA CROSS-LINGUAL
+    # =========================================================================
+    slide = presentation.slides.add_slide(blank)
+    add_header(slide, "Índice semântico e busca multilíngue", "Embeddings permitem buscar por intenção em português na documentação em inglês", 7, total_slides)
+    add_metric(slide, str(m["vector_count"]), "vetores armazenados (.npy)", 0.75, 1.75, 3.7, TEAL)
+    add_metric(slide, str(m["vector_dimensions"]), "dimensões (qwen3-embedding:0.6b)", 4.8, 1.75, 3.7, BLUE)
+    add_metric(slide, "0,55 – 0,60", "limiar de similaridade configurável", 8.85, 1.75, 3.75, ORANGE)
+
+    add_rect(slide, 0.75, 3.42, 11.85, 1.65, WHITE, True, LINE)
+    flow_items = [
+        ("Pergunta em PT-BR", "Ex: 'Como criar Events e configurar triggers?'", 0.95, 2.55),
+        ("Prompt c/ Instrução", "Instruct: Retrieve HighBond API...\nQuery: <pergunta>", 3.9, 2.65),
+        ("Produto Escalar", "Matriz (369×1024) @ Vetor (1024)\n= Similaridade do Cosseno", 6.95, 2.65),
+        ("Top-K + Conteúdo", "1º buscar_highbond (ranking)\n2º obter_chunk ( texto integral )", 10.0, 2.4),
+    ]
+    for f_title, f_sub, fx, fw in flow_items:
+        add_text(slide, f_title, fx, 3.65, fw, 0.3, 14, NAVY, True)
+        add_text(slide, f_sub, fx, 4.02, fw, 0.85, 11, MUTED)
+    for ax in (3.52, 6.58, 9.64):
+        add_text(slide, "→", ax, 3.85, 0.32, 0.3, 20, TEAL, True, align=PP_ALIGN.CENTER)
+
+    add_rect(slide, 0.75, 5.38, 11.85, 1.25, SOFT_BG, True, LINE)
+    add_text(
+        slide,
+        "Por que buscar em 2 etapas (buscar_highbond → obter_chunk)?\n"
+        "Na 1ª chamada o LLM recebe os 5 a 10 candidatos mais próximos com score de similaridade e resumo. Em seguida, ele chama obter_chunk apenas para os IDs que realmente respondem à pergunta, mantendo o contexto enxuto e preciso.",
+        1.05,
+        5.55,
+        11.2,
+        0.95,
         13,
         INK,
-        gap=0.18,
     )
     add_footer(slide)
 
     # =========================================================================
-    # SLIDE 7 — MOTOR SEMÂNTICO, CACHE E CONTROLE DE TAXA
+    # SLIDE 8 — RESULTADO 1: CHATGPT (CASO REAL EVENTS & HANDLERS)
     # =========================================================================
     slide = presentation.slides.add_slide(blank)
-    add_header(slide, "Performance, Cache LRU e Proteção do Serviço", "Arquitetura desenhada para responder rápido e suportar múltiplos usuários", 7, total_slides)
+    add_header(
+        slide,
+        "Resultado no ChatGPT: Consulta via MCP",
+        "O modelo dividiu o problema em 2 requisições semânticas (Events e Handlers) e recuperou os chunks exatos",
+        8,
+        total_slides,
+    )
 
-    add_metric(slide, f"{m['vector_count']} × {m['vector_dimensions']}", "Matriz de Embeddings (.npy)", 0.75, 1.68, 2.8, TEAL, "Apenas 1,5 MB em memória RAM")
-    add_metric(slide, "~650 ms", "Latência de Busca (Warm)", 3.78, 1.68, 2.8, BLUE, "Vetorização Qwen3 em CPU + NumPy")
-    add_metric(slide, "~2,0 ms", "Latência em Cache Hit (LRU)", 6.81, 1.68, 2.8, GREEN, "Até 256 perguntas recentes em RAM")
-    add_metric(slide, "30 req/min", "Rate Limit por Usuário/IP", 9.84, 1.68, 2.78, ORANGE, "Sliding window + Semáforo CPU (4)")
+    # Coluna Esquerda: Os dados reais retornados pelo ChatGPT
+    add_rect(slide, 0.72, 1.52, 6.85, 5.32, WHITE, True, LINE)
 
-    add_rect(slide, 0.75, 3.35, 11.87, 3.3, WHITE, True, LINE)
-    add_text(slide, "Camadas de Proteção e Estabilidade Implementadas (api.py & ollama.py)", 1.1, 3.62, 10.5, 0.32, 16, NAVY, True)
-
-    cards = [
-        ("Autenticação Flexível", "Aceita Authorization: Bearer, header X-API-Key ou query ?api_key= em tempo constante (secrets.compare_digest).", TEAL, 1.1),
-        ("Rate Limiting (HTTP 429)", "Janela deslizante por chave ou IP real (CF-Connecting-IP / X-Forwarded-For) com retorno do cabeçalho Retry-After.", ORANGE, 4.95),
-        ("Semáforo + Cache LRU", "BoundedSemaphore impede sobrecarga simultânea de CPU no Ollama, enquanto o lru_cache responde buscas repetidas em 2 ms.", BLUE, 8.8),
-    ]
-    for c_title, c_desc, c_color, c_x in cards:
-        add_rect(slide, c_x, 4.18, 3.55, 2.15, PAPER, True, LINE)
-        add_rect(slide, c_x, 4.18, 3.55, 0.09, c_color, True)
-        add_text(slide, c_title, c_x + 0.2, 4.42, 3.15, 0.3, 14, NAVY, True)
-        add_text(slide, c_desc, c_x + 0.2, 4.82, 3.15, 1.3, 11.5, MUTED)
-
-    add_footer(slide)
-
-    # =========================================================================
-    # SLIDE 8 — ARQUITETURA EM PRODUÇÃO (GOOGLE CLOUD RUN)
-    # =========================================================================
-    slide = presentation.slides.add_slide(blank)
-    add_header(slide, "Arquitetura em Produção no Google Cloud Run", "Um único serviço servindo Agentes MCP, ChatGPT Actions e Requisições HTTP", 8, total_slides)
-
-    # Coluna Esquerda: Clientes
-    add_rect(slide, 0.75, 1.72, 3.4, 4.9, WHITE, True, LINE)
-    add_badge(slide, "CLIENTES CONECTADOS", 1.0, 1.95, 2.9, 0.32, DARK_SLATE, WHITE, 10)
-
-    clientes = [
-        ("Gemini / Antigravity / IDEs", "Via MCP Local (stdio) ou Remoto (/mcp)", TEAL, 2.52),
-        ("App do ChatGPT (Web & Mobile)", "Via Custom GPT Actions (/openapi.json) e @menção", GREEN, 3.88),
-        ("Scripts Python / Notebooks / n8n", "Via Requisição HTTP REST (POST /buscar)", BLUE, 5.24),
-    ]
-    for cl_title, cl_sub, cl_col, cl_y in clientes:
-        add_rect(slide, 1.0, cl_y, 2.9, 1.1, PAPER, True, cl_col, 1.2)
-        add_text(slide, cl_title, 1.15, cl_y + 0.16, 2.6, 0.3, 12.5, NAVY, True)
-        add_text(slide, cl_sub, 1.15, cl_y + 0.52, 2.6, 0.45, 10.5, MUTED)
-
-    add_text(slide, "HTTPS\nBearer", 4.25, 3.85, 0.85, 0.6, 11, TEAL, True, align=PP_ALIGN.CENTER)
-    add_text(slide, "⇄", 4.35, 4.35, 0.65, 0.4, 24, TEAL, True, align=PP_ALIGN.CENTER)
-
-    # Coluna Direita: Container Cloud Run
-    add_rect(slide, 5.2, 1.72, 7.42, 4.9, CARD_DARK, True, TEAL, 1.5)
-    add_badge(slide, "GOOGLE CLOUD RUN (us-central1 • Gen2 • 2 GiB RAM • Scale-to-Zero)", 5.5, 1.95, 6.8, 0.34, TEAL, WHITE, 10)
-    add_text(slide, "https://rag-highbond-764415736.us-central1.run.app", 5.5, 2.42, 6.8, 0.3, 13, RGBColor(139, 233, 253), True, "Consolas")
-
-    add_rect(slide, 5.5, 2.92, 3.25, 3.35, RGBColor(39, 55, 77), True, BLUE, 1.2)
-    add_text(slide, "FastAPI + FastMCP (api.py)", 5.7, 3.12, 2.85, 0.3, 13.5, WHITE, True)
+    # Bloco Requisição 1
+    add_badge(slide, "REQUISIÇÃO 1 — EVENTS (similaridade_minima: 0.55 | top 10)", 0.92, 1.68, 4.6, 0.28, GREEN, WHITE, 9)
     add_text(
         slide,
-        "• POST /buscar\n• GET /chunks/{id}\n• GET /openapi.json\n• GET /health\n• POST /mcp (Streamable HTTP)\n• GET /sse (Server-Sent Events)",
-        5.7,
-        3.55,
-        2.85,
-        2.4,
-        11.5,
-        RGBColor(210, 228, 245),
-        False,
-        "Consolas",
-    )
-
-    add_rect(slide, 9.05, 2.92, 3.25, 3.35, RGBColor(39, 55, 77), True, ORANGE, 1.2)
-    add_text(slide, "Motor Interno Embarcado", 9.25, 3.12, 2.85, 0.3, 13.5, WHITE, True)
-    add_text(
-        slide,
-        "• Ollama Server (127.0.0.1:11434)\n• Modelo qwen3-embedding:0.6b\n  pré-baixado em /app/.ollama\n• IndiceBusca (NumPy .npy)\n• 369 Chunks Markdown\n• Cache LRU (256 queries)",
-        9.25,
-        3.55,
-        2.85,
-        2.4,
-        11.5,
-        RGBColor(210, 228, 245),
-    )
-
-    add_footer(slide)
-
-    # =========================================================================
-    # SLIDE 9 — DEMONSTRAÇÃO 1: FUNCIONANDO NO GEMINI / ANTIGRAVITY (MCP)
-    # =========================================================================
-    slide = presentation.slides.add_slide(blank)
-    add_header(slide, "Na Prática 1: Funcionando no Gemini / Antigravity (MCP)", "O agente aciona autonomamente as ferramentas buscar_highbond e obter_chunk", 9, total_slides)
-
-    add_rect(slide, 0.75, 1.68, 4.35, 4.95, WHITE, True, LINE)
-    add_badge(slide, "INTEGRAÇÃO VIA MCP", 1.0, 1.95, 2.1, 0.3, TEAL, WHITE, 9.5)
-    add_text(slide, "Descoberta e Execução Nativa de Tools", 1.0, 2.4, 3.85, 0.55, 17, NAVY, True, "Aptos Display")
-    add_bullet_list(
-        slide,
-        [
-            "Configurado em mcp_config.json (local via stdio ou remoto via /mcp).",
-            "O modelo identifica a dúvida sobre HighBond e chama buscar_highbond.",
-            "Com o ID retornado (score 0.7018), lê o Markdown exato via obter_chunk.",
-            "Gera código e explicações sem alucinar rotas ou parâmetros.",
-        ],
-        1.0,
-        3.15,
-        3.85,
-        12.5,
+        'Pergunta: "Quais são os endpoints da API HighBond para listar, consultar, criar, atualizar e excluir Events (gatilhos/eventos) no módulo Resultados? Inclua métodos HTTP, rotas, payloads e atributos triggers."',
+        0.92,
+        2.02,
+        6.45,
+        0.52,
+        9.5,
         INK,
-        gap=0.18,
-        bullet_color=TEAL,
+        True,
+    )
+    add_mini_table(
+        slide,
+        headers=["Pos", "Simil.", "ID do Documento (Chunk)", "Endpoint Encontrado"],
+        rows=[
+            ["1", "0.7455", "endpoint-get-orgs-org-id-events-id-getevent", "GET evento"],
+            ["2", "0.7287", "endpoint-get-orgs-org-id-events-getevents", "GET eventos"],
+            ["3", "0.7041", "endpoint-post-orgs-org-id-events-createevent", "POST evento"],
+            ["4", "0.7032", "endpoint-patch-orgs-org-id-events-id-updateevent", "PATCH evento"],
+            ["10", "0.6749", "endpoint-delete-orgs-org-id-events-id-deleteevent", "DELETE evento"],
+        ],
+        x=0.92,
+        y=2.56,
+        col_widths=[0.45, 0.68, 3.85, 1.45],
+        accent=GREEN,
+        row_h=0.25,
+        font_size=8.8,
     )
 
-    add_screenshot_frame(
+    # Bloco Requisição 2
+    add_badge(slide, "REQUISIÇÃO 2 — HANDLERS E CONFIGURAÇÃO DE GATILHOS", 0.92, 4.22, 4.6, 0.28, TEAL, WHITE, 9)
+    add_text(
         slide,
-        x=5.35,
-        y=1.68,
-        w=7.25,
-        h=4.95,
-        title_window="Antigravity / Gemini — MCP Tool Call: rag-highbond (buscar_highbond)",
-        instruction_text="Cole aqui o print do Gemini / Antigravity chamando a tool buscar_highbond\n(ou salve a imagem como docs/print_gemini.png e rode gerar_apresentacao.py)",
-        candidate_paths=PRINT_GEMINI,
+        'Pergunta: "Quais são os endpoints da API HighBond para obter, criar, atualizar e excluir Handlers? Preciso do schema/payload de conditions e actions e da relação entre Events e Handlers (fieldUpdated e questionnaireResponded)."',
+        0.92,
+        4.56,
+        6.45,
+        0.52,
+        9.5,
+        INK,
+        True,
+    )
+    add_mini_table(
+        slide,
+        headers=["Pos", "Simil.", "ID do Documento (Chunk)", "Endpoint Encontrado"],
+        rows=[
+            ["1", "0.7759", "endpoint-post-orgs-org-id-handlers-createhandler", "POST Handler"],
+            ["2", "0.7703", "endpoint-get-orgs-org-id-handlers-id-gethandler", "GET Handler individual"],
+            ["3", "0.7621", "endpoint-patch-orgs-org-id-handlers-id-updatehandler", "PATCH Handler"],
+        ],
+        x=0.92,
+        y=5.12,
+        col_widths=[0.45, 0.68, 3.85, 1.45],
         accent=TEAL,
+        row_h=0.26,
+        font_size=8.8,
     )
-    add_footer(slide)
-
-    # =========================================================================
-    # SLIDE 10 — DEMONSTRAÇÃO 2: FUNCIONANDO NO APP DO CHATGPT
-    # =========================================================================
-    slide = presentation.slides.add_slide(blank)
-    add_header(slide, "Na Prática 2: Funcionando no App do ChatGPT (Web & Mobile)", "Integrado via Custom GPT Actions (OpenAPI 3.1) e Conector MCP", 10, total_slides)
-
-    add_rect(slide, 0.75, 1.68, 4.35, 4.95, WHITE, True, LINE)
-    add_badge(slide, "CHATGPT ACTIONS & @PLUGIN", 1.0, 1.95, 2.5, 0.3, GREEN, WHITE, 9.5)
-    add_text(slide, "Especialista HighBond no PC e no Celular", 1.0, 2.4, 3.85, 0.55, 17, NAVY, True, "Aptos Display")
-    add_bullet_list(
+    add_text(
         slide,
-        [
-            "Importação automática via URL: .../openapi.json com autenticação Bearer.",
-            "Pode ser acionado em qualquer conversa digitando @Especialista HighBond.",
-            "Funciona no navegador, no App Desktop e no App de Celular (Android/iOS).",
-            "Encadeia automaticamente a busca semântica e a leitura do chunk.",
-        ],
-        1.0,
-        3.15,
-        3.85,
-        12.5,
-        INK,
-        gap=0.18,
-        bullet_color=GREEN,
+        "✓ Após o buscar_highbond, o ChatGPT acionou obter_chunk para ler os schemas completos de cada operação.",
+        0.92,
+        6.28,
+        6.45,
+        0.35,
+        9.5,
+        NAVY,
+        True,
     )
 
-    add_screenshot_frame(
+    # Coluna Direita: Espaço para o Print do ChatGPT
+    add_screenshot_box(
         slide,
-        x=5.35,
-        y=1.68,
-        w=7.25,
-        h=4.95,
-        title_window="ChatGPT App — Talking to rag-highbond-764415736.us-central1.run.app",
-        instruction_text="Cole aqui o print do ChatGPT consultando a Action do servidor Cloud Run\n(ou salve a imagem como docs/print_gpt.png e rode gerar_apresentacao.py)",
+        x=7.78,
+        y=1.52,
+        w=4.82,
+        h=5.32,
+        window_title="ChatGPT — MCP rag---highbond-api",
+        placeholder_label="PRINT DO CHATGPT AQUI",
+        hint_text="Cole aqui o print da resposta do ChatGPT\n(ou salve como docs/print_gpt.png)",
         candidate_paths=PRINT_GPT,
         accent=GREEN,
     )
     add_footer(slide)
 
     # =========================================================================
-    # SLIDE 11 — DEMONSTRAÇÃO 3: FUNCIONANDO VIA REQUISIÇÃO API / NOTEBOOK
+    # SLIDE 9 — RESULTADO 2: GEMINI (VIA MCP)
     # =========================================================================
     slide = presentation.slides.add_slide(blank)
-    add_header(slide, "Na Prática 3: Requisição Direta via API REST & MCP HTTP", "Consumo direto por scripts Python, Jupyter Notebook (testes.ipynb) e automações", 11, total_slides)
-
-    add_rect(slide, 0.75, 1.68, 4.35, 4.95, CARD_DARK, True)
-    add_badge(slide, "EXEMPLO DE REQUISIÇÃO HTTP", 1.0, 1.95, 2.6, 0.3, BLUE, WHITE, 9.5)
-    req_code = (
-        "POST /buscar HTTP/1.1\n"
-        "Host: rag-highbond-764415736\n"
-        "      .us-central1.run.app\n"
-        "Authorization: Bearer hb-rag-***\n\n"
-        "{\n"
-        '  "pergunta": "como criar projeto?",\n'
-        '  "quantidade": 2\n'
-        "}\n\n"
-        "# Header de Resposta:\n"
-        "HTTP/1.1 200 OK\n"
-        "X-Process-Time-Ms: 2.02"
-    )
-    add_text(slide, req_code, 1.0, 2.42, 3.9, 3.9, 12, RGBColor(215, 232, 248), False, "Consolas")
-
-    add_screenshot_frame(
+    add_header(
         slide,
-        x=5.35,
-        y=1.68,
-        w=7.25,
-        h=4.95,
-        title_window="Jupyter Notebook (testes.ipynb) / Postman — POST /buscar & GET /chunks/{id}",
-        instruction_text="Cole aqui o print da requisição via API / Notebook testes.ipynb retornando JSON\n(ou salve a imagem como docs/print_api.png e rode gerar_apresentacao.py)",
-        candidate_paths=PRINT_API,
+        "Resultado no Gemini: Consulta via MCP",
+        "Descoberta automática das tools buscar_highbond e obter_chunk para responder dúvidas da API",
+        9,
+        total_slides,
+    )
+
+    add_rect(slide, 0.72, 1.55, 5.55, 5.25, WHITE, True, LINE)
+    add_badge(slide, "FLUXO EXECUTADO PELO GEMINI", 0.98, 1.8, 2.8, 0.3, BLUE, WHITE, 9.5)
+    add_text(slide, "Consulta Contextual sem Alucinação de Endpoints", 0.98, 2.22, 5.0, 0.4, 17, NAVY, True, "Aptos Display")
+    add_bullet_list(
+        slide,
+        [
+            "O Gemini recebe a pergunta em português e aciona a ferramenta buscar_highbond do servidor MCP.",
+            "Identifica com alta similaridade os endpoints de criação de projetos (0.7018) e importação (0.6892).",
+            "Chama obter_chunk com o ID selecionado para inspecionar os parâmetros obrigatórios e estados ('active', 'archive').",
+            "Entrega a explicação técnica e o exemplo de requisição fiéis à documentação oficial.",
+        ],
+        0.98,
+        2.78,
+        5.05,
+        12.5,
+        INK,
+        gap=0.14,
+        bullet_color=BLUE,
+        row_h=0.48,
+    )
+
+    add_mini_table(
+        slide,
+        headers=["Pos", "Simil.", "ID Retornado ao Gemini", "Título"],
+        rows=[
+            ["1", "0.7018", "endpoint-post-orgs-org-id-projects-createproject", "Create a project"],
+            ["2", "0.6892", "endpoint-post-orgs-org-id-import-data-createimport", "Create import"],
+        ],
+        x=0.98,
+        y=5.45,
+        col_widths=[0.42, 0.65, 2.65, 1.3],
+        accent=BLUE,
+        row_h=0.28,
+        font_size=8.8,
+    )
+
+    add_screenshot_box(
+        slide,
+        x=6.5,
+        y=1.55,
+        w=6.1,
+        h=5.25,
+        window_title="Gemini — Uso da Ferramenta MCP rag-highbond",
+        placeholder_label="PRINT DO GEMINI AQUI",
+        hint_text="Cole aqui o print do Gemini utilizando o MCP rag-highbond\n(ou salve como docs/print_gemini.png)",
+        candidate_paths=PRINT_GEMINI,
         accent=BLUE,
     )
     add_footer(slide)
 
     # =========================================================================
-    # SLIDE 12 — ENTREGÁVEIS CONCLUÍDOS & PRÓXIMOS PASSOS
+    # SLIDE 10 — RESULTADO 3: GOOGLE COLAB / NOTEBOOK
     # =========================================================================
     slide = presentation.slides.add_slide(blank)
-    add_header(slide, "Resultados Alcançados e Próximos Passos", "Um ecossistema RAG completo, seguro e em produção na nuvem", 12, total_slides)
-
-    add_rect(slide, 0.75, 1.68, 5.75, 4.95, WHITE, True, TEAL, 1.5)
-    add_badge(slide, "ENTREGÁVEIS EM PRODUÇÃO", 1.05, 1.95, 2.4, 0.3, TEAL, WHITE, 9.5)
-    add_bullet_list(
+    add_header(
         slide,
-        [
-            "369 chunks Markdown estruturados + Índice NumPy (1024d).",
-            "Pacote Python modular (rag_highbond) com suíte de testes Pytest.",
-            "Servidor Híbrido: API REST (OpenAPI 3.1) + MCP (stdio, /mcp e /sse).",
-            "Segurança: Autenticação por API Key, Rate Limiting (30/min) e Cache LRU.",
-            "Deploy Serverless ativo no Google Cloud Run com Ollama embarcado.",
-        ],
-        1.05,
-        2.5,
-        5.15,
-        13.5,
-        INK,
-        gap=0.16,
-        bullet_color=TEAL,
+        "Resultado no Google Colab: Experimentação e Busca",
+        "Validação direta das consultas semânticas, scores de similaridade e inspeção dos chunks em Python",
+        10,
+        total_slides,
     )
 
-    add_rect(slide, 6.82, 1.68, 5.78, 4.95, WHITE, True, LINE)
-    add_badge(slide, "EVOLUÇÕES FUTURAS", 7.12, 1.95, 2.0, 0.3, PURPLE, WHITE, 9.5)
+    add_rect(slide, 0.72, 1.55, 5.55, 5.25, CARD_DARK, True)
+    add_badge(slide, "EXECUÇÃO NO GOOGLE COLAB / JUPYTER", 0.98, 1.8, 3.2, 0.3, ORANGE, WHITE, 9.5)
+    colab_code = (
+        "# Consulta semântica direta no notebook\n"
+        "res = requests.post(\n"
+        '    f"{BASE_URL}/buscar",\n'
+        "    json={\n"
+        '        "pergunta": "Como atualizar um control test?",\n'
+        '        "quantidade": 5,\n'
+        '        "similaridade_minima": 0.55\n'
+        "    }\n"
+        ").json()\n\n"
+        "for r in res:\n"
+        '    print(r["posicao"], r["similaridade"], r["id"])\n\n'
+        "# Recupera o Markdown completo do 1º resultado\n"
+        'chunk = requests.get(f"{BASE_URL}/chunks/{res[0][\'id\']}").json()\n'
+        'print(chunk["conteudo"])'
+    )
+    add_text(slide, colab_code, 0.98, 2.28, 5.05, 3.1, 11.5, RGBColor(220, 235, 245), False, "Consolas")
+
+    add_rect(slide, 0.98, 5.45, 5.05, 1.1, RGBColor(39, 58, 77), True, ORANGE, 1.0)
+    add_text(
+        slide,
+        "Permite testar lotes de perguntas em português, calibrar o limiar de similaridade (0.55–0.60) e auditar os trechos retornados pelo índice.",
+        1.15,
+        5.6,
+        4.7,
+        0.8,
+        11.5,
+        WHITE,
+    )
+
+    add_screenshot_box(
+        slide,
+        x=6.5,
+        y=1.55,
+        w=6.1,
+        h=5.25,
+        window_title="Google Colab — Notebook de Testes e Validação do RAG",
+        placeholder_label="PRINT DO GOOGLE COLAB AQUI",
+        hint_text="Cole aqui o print do Google Colab executando as buscas\n(ou salve como docs/print_colab.png)",
+        candidate_paths=PRINT_COLAB,
+        accent=ORANGE,
+    )
+    add_footer(slide)
+
+    # =========================================================================
+    # SLIDE 11 — CONCLUSÃO E PRÓXIMOS PASSOS
+    # =========================================================================
+    slide = presentation.slides.add_slide(blank)
+    add_header(slide, "Síntese dos Resultados e Próximos Passos", "Uma base semântica precisa, rastreável e validada em múltiplos LLMs", 11, total_slides)
+
+    add_rect(slide, 0.75, 1.72, 5.7, 4.9, WHITE, True, TEAL, 1.5)
+    add_badge(slide, "RESULTADOS COMPROVADOS", 1.05, 2.0, 2.45, 0.3, TEAL, WHITE, 9.5)
     add_bullet_list(
         slide,
         [
-            "Expandir para novas coleções (ex: documentação do Diligent Robots).",
-            "Adicionar filtros combinados por domínio/tag e verbo HTTP na busca.",
-            "Reindexação incremental automatizada via CI/CD quando o OpenAPI mudar.",
-            "Dashboard de telemetria das dúvidas mais frequentes dos usuários.",
+            "Documentação OpenAPI integral convertida em 369 unidades de contexto.",
+            "Alta precisão semântica PT-BR → EN (scores entre 0.67 e 0.78 para endpoints exatos).",
+            "Recuperação completa de CRUD (GET, POST, PATCH, DELETE) como visto em Events e Handlers.",
+            "Funcionamento validado na prática no ChatGPT, no Gemini e no Google Colab.",
+            "Eliminação de alucinações sobre rotas, payloads e atributos da API HighBond.",
         ],
-        7.12,
-        2.5,
+        1.05,
+        2.55,
+        5.1,
+        13.5,
+        INK,
+        gap=0.18,
+        bullet_color=TEAL,
+        row_h=0.48,
+    )
+
+    add_rect(slide, 6.8, 1.72, 5.8, 4.9, WHITE, True, LINE)
+    add_badge(slide, "EVOLUÇÕES FUTURAS", 7.1, 2.0, 2.1, 0.3, PURPLE, WHITE, 9.5)
+    add_bullet_list(
+        slide,
+        [
+            "Expandir a base para novas coleções (ex: documentação do Diligent Robots).",
+            "Combinar busca semântica com filtros explícitos por tag/domínio e verbo HTTP.",
+            "Automatizar a regeneração de chunks e embeddings a novas versões do OpenAPI.",
+            "Avaliar métricas de recuperação (Recall@K / MRR) em um conjunto expandido de perguntas.",
+        ],
+        7.1,
+        2.55,
         5.15,
         13.5,
         INK,
-        gap=0.16,
+        gap=0.18,
         bullet_color=PURPLE,
+        row_h=0.48,
     )
 
     add_footer(slide)
@@ -712,5 +770,5 @@ def build_presentation(output_path: Path = OUTPUT):
 
 
 if __name__ == "__main__":
-    caminho_gerado = build_presentation()
-    print(f"Apresentação gerada em: {caminho_gerado}")
+    caminho = build_presentation()
+    print(f"Apresentação gerada em: {caminho}")
