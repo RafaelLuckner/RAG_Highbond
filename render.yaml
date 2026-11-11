@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: rag-highbond
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: RAG_RATE_LIMIT_PER_MIN
+        value: "30"
+      - key: RAG_MAX_CONCURRENT
+        value: "4"
+      - key: EMBEDDING_PROVIDER
+        value: "openai_compatible"
+      - key: EMBEDDING_API_MODEL
+        value: "Qwen/Qwen3-Embedding-0.6B"
+      - key: EMBEDDING_API_URL
+        sync: false
+      - key: EMBEDDING_API_KEY
+        sync: false
+      - key: RAG_API_KEY
+        generateValue: true
+

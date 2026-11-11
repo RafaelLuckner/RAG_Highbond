@@ -1,0 +1,71 @@
+---
+id: endpoint-get-orgs-org-id-strategy-segments-id-getstrategysegment
+title: "Strategy: Get a segment"
+tags: [endpoint, strategy]
+source: openapi.json (HighBond API v1.1.0)
+---
+
+## Strategy
+
+You can use the Strategy app to identify, assess, and monitor strategic risks.
+
+Learn more.
+
+### `GET /orgs/{org_id}/strategy_segments/{id}` — Get a segment
+
+- **operationId:** `getStrategySegment`
+- **Domínio(s):** Strategy
+
+Get information about an operating segment.
+
+<details>
+<summary><strong>Parâmetros</strong> (2)</summary>
+
+| Nome | Local | Obrigatório | Tipo | Descrição |
+|------|-------|-------------|------|-----------|
+| `org_id` | path | ✅ | string | The ID of the HighBond instance. Ex.: `1` |
+| `id` | path | ✅ | string | The ID of the requested resource. Ex.: `9999` |
+
+</details>
+
+<details>
+<summary><strong>Respostas</strong> (5)</summary>
+
+<details>
+<summary>`200` — OK.</summary>
+
+**Content-Type:** `application/vnd.api+json`
+
+**Schema:** `GetStrategySegmentResponse`
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| `data` | object | ✅ | The data associated with the resource. |
+| `data.id` | string | ✅ | The ID of the requested resource. Ex.: `"101"` |
+| `data.type` | string | ✅ | The classification of the object (`"strategy_segments"`). Ex.: `"strategy_segments"` |
+| `data.attributes` | object | ✅ | The attributes associated with the resource. |
+| `data.attributes.name` | string |  | The name of the segment. Ex.: `"EMEA"` |
+| `data.attributes.objective_ids` | array[string] |  | Objectives connected to this segment, see Strategy Map. Ex.: `["31", "97", "98"]` |
+| `data.attributes.created_at` | string |  | The timestamp identifying when the segment was created. Ex.: `"2019-02-09T13:17:26Z"` |
+| `data.attributes.updated_at` | string |  | The timestamp identifying when the segment was last updated. Ex.: `"2019-02-09T13:17:26Z"` |
+
+</details>
+
+<details>
+<summary>`400` — Bad request.</summary>
+
+**Content-Type:** `application/vnd.api+json`
+
+**Schema:** `Errors`
+
+Erro no formato padrão JSON:API: objeto `errors` (array) com `status` (código HTTP), `source.pointer` (JSON Pointer RFC6901 do campo com erro), `code`, `title` e `detail`.
+
+</details>
+
+- `401` — Bad credentials.
+
+- `403` — Forbidden.
+
+- `404` — Not found.
+
+</details>

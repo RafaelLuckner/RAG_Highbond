@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Ambientes virtuais
+.venv/
+venv/
+
+# VS Code
+.vscode/settings.json
+
+# Artefatos locais e arquivos brutos de extração (não usados em runtime)
+*.log
+.env
+~$*
+.pytest_cache/
+rag_doc_api/openapi.json
+rag_doc_api/raw_info/highbond_api_completo.md
+acoes_coletadas.json
+*.pptx
+docs/

@@ -1,0 +1,49 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: rag-ollama
+    restart: unless-stopped
+    environment:
+      # Mantém o modelo carregado na RAM por 24h para evitar cold-start (latência imediata)
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_NUM_PARALLEL=2
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - |
+        ollama serve &
+        SERVER_PID=$$!
+        sleep 3
+        echo "Garantindo modelo ${EMBEDDING_MODEL:-qwen3-embedding:0.6b}..."
+        ollama pull ${EMBEDDING_MODEL:-qwen3-embedding:0.6b}
+        wait $$SERVER_PID
+    healthcheck:
+      test: [ "CMD", "ollama", "list" ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  rag-api:
+    build: .
+    container_name: rag-highbond-api"
+    restart: unless-stopped
+    depends_on:
+      ollama:
+        condition: service_healthy
+    ports:
+      - "${PORTA_API:-8000}:8000"
+    environment:
+      - OLLAMA_URL=http://ollama:11434/api/embed
+      - OLLAMA_TAGS_URL=http://ollama:11434/api/tags
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-qwen3-embedding:0.6b}
+      - OLLAMA_TIMEOUT=${OLLAMA_TIMEOUT:-15}
+      - RAG_API_KEY=${RAG_API_KEY:-}
+      - RAG_RATE_LIMIT_PER_MIN=${RAG_RATE_LIMIT_PER_MIN:-30}
+      - RAG_MAX_CONCURRENT=${RAG_MAX_CONCURRENT:-4}
+      - RAG_EMBEDDING_CACHE_SIZE=${RAG_EMBEDDING_CACHE_SIZE:-256}
+      - RAG_PUBLIC_URL=${RAG_PUBLIC_URL:-}
+
+volumes:
+  ollama_data:
+

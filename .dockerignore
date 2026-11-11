@@ -1,0 +1,13 @@
+.git
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+docs
+*.pptx
+~$*
+*.ipynb
+rag_doc_api/raw_info/highbond_api_completo.md
+rag_doc_api/openapi.json
+

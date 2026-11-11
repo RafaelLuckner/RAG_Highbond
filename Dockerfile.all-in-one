@@ -1,0 +1,44 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    OLLAMA_KEEP_ALIVE=24h \
+    OLLAMA_NUM_PARALLEL=2 \
+    PORT=7860
+
+WORKDIR /app
+
+# Instala curl e zstd (necessários para instalar o binário oficial do Ollama) e instala o Ollama
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    zstd \
+    && curl -fsSL https://ollama.com/install.sh | sh \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Instala dependências e o pacote Python
+COPY pyproject.toml ./
+COPY src ./src
+RUN pip install --no-cache-dir .
+
+# Copia a base de chunks e o índice de embeddings pré-calculado
+COPY rag_doc_api/indice ./rag_doc_api/indice
+COPY rag_doc_api/raw_info/chunks ./rag_doc_api/raw_info/chunks
+
+# Pré-baixa o modelo qwen3-embedding:0.6b durante o build da imagem!
+# Assim, quando o container subir, a resposta já é imediata (sem esperar download).
+RUN ollama serve & \
+    SERVER_PID=$! && \
+    sleep 3 && \
+    ollama pull qwen3-embedding:0.6b && \
+    kill $SERVER_PID
+
+# Cria pasta de cache com permissão aberta (exigido pelo Hugging Face Spaces UID 1000)
+RUN mkdir -p /.ollama && chmod -R 777 /.ollama /root
+
+EXPOSE 7860
+
+# Inicia o Ollama em background e sobe a API FastAPI + MCP na porta configurada ($PORT)
+CMD ["/bin/sh", "-c", "ollama serve & sleep 2 && rag-api --host 0.0.0.0 --porta ${PORT:-7860}"]
+
